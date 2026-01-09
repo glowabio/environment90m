@@ -20,7 +20,7 @@ var=${2}
 tbids=( $(find $out/indx -name "${nm}_*.txt") )
 
 # create output table with header
-echo "subcID min max range mean sd" > ${tmp}/${nm}_${var}.txt
+echo "subcID min max range mean sd" > ${tmp}/${var}_${nm}.txt
 
 # for loop to go through each RU and extract the ids of interest
 for i in ${tbids[@]}
@@ -36,13 +36,13 @@ do
     
     # retrieve only records with IDs of interest
     awk 'NR==FNR {a[$1]; next} FNR > 1 || $1 in a' \
-     ${i} $tb >> ${tmp}/${nm}_${var}.txt
+     ${i} $tb >> ${tmp}/${var}_${nm}.txt
 done
 
 zip -jq $zip/elevation/${var}_${nm}.zip \
-    ${tmp}/${nm}_${var}.txt
+    ${tmp}/${var}_${nm}.txt
 
-rm ${tmp}/${nm}_${var}.txt
+#rm ${tmp}/${var}_${nm}.txt
 
 }
 
