@@ -122,8 +122,8 @@ cp tmp/sti/sti_h10v04.zip $zip/hydrography90m_v1_0/sti
 #    if [ "$VAR" == "sti" ]; then VARINPUT=$DATFOLDER/CompUnit_stream_indices_tiles20d/all_tif_sti_dis.vrt; fi
 
 export sc=/mnt/shared/hydrography90m_v.1.0_online/hydrography90m_v.1.0/global/sub_catchment_ovr.tif
-
-export tile=h22v04
+export var=cti
+export tile=h20v04
 export ctitarget=/mnt/shared/hydrography90m_v.1.0_online/hydrography90m_v.1.0/flow.index/cti_tiles20d/cti_${tile}.tif
 
 gdalwarp $(pkinfo -i $ctitarget -te)  $sc $tmp/sc_$tile.tif
@@ -136,9 +136,22 @@ grass  -f --gtext --tmp-location $tmp/sc_$tile.tif  # <<'EOF'
 
   echo "subcID min max range mean sd" > ${tmp}/cti/cti_${tile}.txt  
 
-  r.univar -t --o map=cti zones=micb | \
-    awk -F"|"  'NR == 1 { for (i=1; i<=NF; i++) {f[$i] = i} } \
-    NR > 1 { printf "%s %.4f %.4f %.4f %.4f %.4f\n", \
-    $(f["zone"]), $(f["min"]), $(f["max"]), $(f["range"]), \
-    $(f["mean"]), $(f["stddev"]) }' >> ${tmp}/cti/cti_${tile}.txt
+#  r.univar -t --o map=cti zones=micb | \
+#    awk -F"|"  'NR == 1 { for (i=1; i<=NF; i++) {f[$i] = i} } \
+#    NR > 1 { printf "%s %.4f %.4f %.4f %.4f %.4f\n", \
+#    $(f["zone"]), $(f["min"]), $(f["max"]), $(f["range"]), \
+#    $(f["mean"]), $(f["stddev"]) }' >> ${tmp}/cti/cti_${tile}.txt
 
+  r.univar -t --o map=cti zones=micb  > ${tmp}/cti_${tile}_tmp.txt
+  awk -F"|" 'NR > 1  {print $1, $5, $6, $7, $8, $10}' \
+      ${tmp}/cti_${tile}_tmp.txt  > $tmp/test.txt
+
+#  echo "subcID min max range mean sd" > ${tmp}/cti/cti_${tile}.txt  
+  cat $tmp/test.txt >> ${tmp}/cti/cti_${tile}.txt
+
+  rm $tmp/test.tx ${tmp}/cti_${tile}_tmp.txt
+
+  zip -jq $tmp/${var}/${var}_${tile}.zip \
+    ${tmp}/${var}/${var}_${tile}.txt
+
+cp tmp/cti/cti_${tile}.zip $zip/hydrography90m_v1_0/cti

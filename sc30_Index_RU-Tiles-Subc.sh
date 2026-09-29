@@ -13,7 +13,7 @@ touch /mnt/shared/tiles_tb/tile_RUids.txt
 
 # get bbox of tile
 
-files=( $(find /mnt/shared/temp_for_deletion/hydrography90m_v1_2022_all_data_OLD/basin_tiles_final20d_1p  -name "*[0-9].tif") )
+files=( $(find /mnt/shared/regional_unit_baseline/hydrography90m_v1_2022_all_data_OLD/basin_tiles_final20d_1p  -name "*[0-9].tif") )
 
 
 for tile in ${files[@]}
